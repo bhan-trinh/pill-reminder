@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'home.dart';
-import 'Themes/AppColors.dart';
+import '../Pages/home.dart';
+import '../Pages/prescript.dart';
+import '../Themes/AppColors.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -16,7 +17,9 @@ class NavigationMenu extends StatelessWidget {
         backgroundColor: AppColors.secondaryBackground,
         indicatorColor: AppColors.accent1,
         selectedIndex: controller.selectedIndex.value,
-        onDestinationSelected: (index) => controller.selectedIndex.value = index,
+        onDestinationSelected: (index) {
+          controller.selectedIndex.value = index;
+          },
         destinations: [
           NavigationDestination(icon: const Icon(Icons.home, color: Colors.black), label: "Home"),
           NavigationDestination(icon: const Icon(Icons.book, color: Colors.black), label: "Prescriptions"),
@@ -24,7 +27,7 @@ class NavigationMenu extends StatelessWidget {
         ],
         )
         ),
-        body: controller.screens[controller.selectedIndex.value],
+        body: Obx(() => controller.screens[controller.selectedIndex.value]),
     );
   }
 }
@@ -33,7 +36,7 @@ class NavigationController extends GetxController{
   final Rx<int> selectedIndex = 0.obs;
   final screens = [
     const HomePage(),
-    Container(),
+    const PrescriptPage(),
     Container(),
     ];
 }
