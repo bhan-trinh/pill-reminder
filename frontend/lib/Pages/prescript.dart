@@ -8,6 +8,7 @@ class PrescriptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         title: const Text("Home"),
         backgroundColor: AppColors.primaryBackground,
