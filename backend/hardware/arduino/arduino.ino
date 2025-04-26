@@ -7,30 +7,29 @@ void setup() {
   Serial.begin(9600);
 }
 
-void servoOpen() {
-  myservo.write(180);
-}
-
-void servoClose() {
+void servoReset() {
   myservo.write(0);
 }
 
-void receiveData() {
-  if (Serial.available() > 0) {
-    String received_data = Serial.readStringUntil('\n');
-    Serial.print("Received from Python: ");
-    Serial.println(received_data);
+void servoDropPills(int count) {
+  int currentDeg = 0;
+  for (int i = 1; i <= count; i ++) {
+    currentDeg += 60;
+    delay(1000);
+    myservo.write(currentDeg);
   }
 }
 
-void sendData() {
-  if (Serial.available() > 0) {
-    String request = Serial.readStringUntil('\n');
-    if(request == "Request data"){
-      Serial.println("Data from Arduino");
-    }
-  }
+void handleRequest() {
+    int request = Serial.readStringUntil('\n').toInt();
+    servoDropPills(request);
 }
 
 void loop() {
+  if (Serial.available() > 0) {
+    handleRequest();
+  }
+  else {
+    myservo.write(0);
+  }
 }
