@@ -1,6 +1,6 @@
 import requests
 
-url = "https://pills-dispenser-7f1389ec1c6b.herokuapp.com/add"  # Replace with your actual Heroku URL
+url = "https://pills-dispenser-7f1389ec1c6b.herokuapp.com/"  # Replace with your actual Heroku URL
 
 # Send a GET request to the Flask app on Heroku
 response = requests.get(url)
