@@ -14,8 +14,9 @@ class _HomePageState extends State<HomePage> {
   File? _image;
   final _picker = ImagePicker();
 
-  pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  // Receive ImageSource parameter and pick from source
+  getImage(ImageSource imageSource) async {
+    final pickedFile = await _picker.pickImage(source: imageSource);
     if (pickedFile != null){
       _image = File(pickedFile.path);
       setState(() {
@@ -31,15 +32,34 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Home"),
         backgroundColor: AppColors.primaryBackground,
       ),
-      body: Center(
-        child: _image == null? Text("No Image") : Image.file(_image!)
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            pickImage();
-          },
-          child: const Icon(Icons.camera_alt)),
+      body: Column(
+        children: [
+          GestureDetector(
+              onTap: () => getImage(ImageSource.camera),
+              child: Stack (
+                alignment: Alignment.center,
+                children: <Widget> [
+                Container(
+                  height: 300,
+                  alignment: Alignment.topCenter,
+                  decoration: BoxDecoration(color: AppColors.accent2),
+                ),
+                Positioned.fill(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt_outlined, size: 100),
+                          Text("Take Photo"),
+                        ],
+                      )
+                )
+                ]  )
+              ),
+          
 
-      );
+          
+      ]
+    )
+   );
   }
 }
