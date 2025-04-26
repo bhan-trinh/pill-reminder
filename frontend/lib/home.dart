@@ -55,7 +55,26 @@ class _HomePageState extends State<HomePage> {
                 )
                 ]  )
               ),
-          
+          GestureDetector(
+            onTap: () => getImage(ImageSource.gallery),
+              child: Stack (
+                alignment: Alignment.center,
+                children: <Widget> [
+                Container(
+                  height: 100,
+                  alignment: Alignment.topCenter,
+                  decoration: BoxDecoration(color: AppColors.accent1),
+                ),
+                Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Choose from Gallery",
+                        style: TextStyle(color: AppColors.primaryBackground),)
+                )
+                )
+                ]  )
+              ),
 
           
       ]
