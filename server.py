@@ -10,8 +10,8 @@ client = genai.Client(api_key=api_key)
 app = flask.Flask(__name__)
 api = Api(app)
 
-def ocr(filename):
-    file = client.files.upload(file=filename)
+def ocr(file_bytes):
+    file = client.files.upload_bytes(file_bytes, mime_type='image/jpg')
     response = client.models.generate_content(
         model="gemini-2.0-flash-001", 
         contents=["Output the contents of this label into a python dictionary listing the medication name, dosage, instructions, and times. Only output the dictionary, nothing else",file])
