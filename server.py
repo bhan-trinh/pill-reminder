@@ -3,8 +3,6 @@ import re
 from flask_restful import Resource, Api
 from google import genai
 
-with open("key.txt", "r") as file:
-    key = file.read()
 
 client = genai.Client(api_key=key)
 
