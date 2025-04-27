@@ -3,6 +3,8 @@ import 'package:my_app/Widgets/med_card.dart';
 import '../Themes/AppColors.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 
 class PrescriptPage extends StatefulWidget {
@@ -18,19 +20,26 @@ class _PrescriptPageState extends State<PrescriptPage> {
   @override
   void initState() {
     super.initState();
-    loadJsonAsset();
+    loadLocalJsonData();
   }
 
-  Future<void> loadJsonAsset() async {
-    final String jsonString =
-        await rootBundle.loadString('lib/database/medLabels.json');
-        
-    var data = jsonDecode(jsonString);
-    print(data);
+  Future<void> loadLocalJsonData() async {
+  // Get the app's documents directory
+  final directory = await getApplicationDocumentsDirectory();
+  final filePath = '${directory.path}/medLabels.json';
+
+  final file = File(filePath);
+  if (await file.exists()) {
+    final jsonString = await file.readAsString();
+    final data = jsonDecode(jsonString);
     setState(() {
       jsonData = data;
     });
+  } else {
+    print("No local file found.");
   }
+}
+
 
 
   @override
