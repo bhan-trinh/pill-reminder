@@ -54,8 +54,8 @@ class _PrescriptPageState extends State<PrescriptPage> {
         itemCount: 2,
         itemBuilder: (BuildContext context, int index) {
           return MedCard(
-            medName: jsonData[index.toString()]["name"],
-            dosage: jsonData[index.toString()]["dosage"],
+            medName: jsonData[index.toString()]["Medication"],
+            dosage: jsonData[index.toString()]["Dosage"],
 
           );
           },
