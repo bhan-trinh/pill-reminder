@@ -6,11 +6,11 @@ import os
 from dotenv import load_dotenv
 import threading
 
-import time
-import datetime
-from backend.hardware.python import serialcontrol
-import serial
-from serial.tools import list_ports
+# import time
+# import datetime
+# from backend.hardware.python import serialcontrol
+# import serial
+# from serial.tools import list_ports
 import checkport
 
 load_dotenv()
