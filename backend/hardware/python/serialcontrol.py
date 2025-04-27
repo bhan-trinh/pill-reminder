@@ -11,13 +11,14 @@ def dropPills(dose, time_to_drop, serial_port=1201):
     now = datetime.datetime.now()
     if now.hour == time_to_drop:
         try:
+            print(f"Trying to open serial port: {serial_port}")
             ser = serial.Serial(serial_port, 9600, timeout=1)
             time.sleep(2)
             ser.write(str(dose).encode())
+            ser.flush()
             time.sleep(1)
+            print(f"Sent dose {dose} to serial port {serial_port}")
         except serial.SerialException as e:
             print(f"Error with the serial connection: {e}")
-        # finally:
-        #     if 'ser' in locals() and ser.is_open:
-        #         ser.close()
+
 

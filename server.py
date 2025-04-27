@@ -18,6 +18,8 @@ client = genai.Client(api_key=api_key)
 app = flask.Flask(__name__)
 api = Api(app)
 
+pill_drop_status = None
+
 def check_serial_connection(port):
     port = f'/dev/tty.usbmodem{port}'
     try:
@@ -43,39 +45,29 @@ def ocr(filename):
     return {"medication_name":medication_name, "dosage":dosage, "instructions":instructions, "times":times}
 
 def runSerial():
-    last_drop_date = None
+    global pill_drop_status
     scheduled_hour = 7 
-    print("Last dropped on: " + last_drop_date)
+    last_drop_date = None
     while True:
-        print(f"Checking serial connection at {now}")
-        now = datetime.datetime.now()
-        current_date = now.date()
-        current_hour = now.hour
-
+        current_date = datetime.datetime.now().date
         serial_status = "connected" if check_serial_connection(1101) else "thread running, not connected"
-        
         print(f"Serial Status: {serial_status}")
-
-        if current_hour == scheduled_hour and current_date != last_drop_date:
-            try:
-                if serial_status == "connected":
-                    serialcontrol.dropPills(
-                        dose=2,
-                        time_to_drop=scheduled_hour,
-                        serial_port=1101
-                    )
-                    last_drop_date = current_date 
-                    print(f"[{now}] Pills dropped successfully.")
-                else:
-                    print(f"[{now}] Cannot drop pills: Serial port not connected.")
-            except Exception as e:
-                print(f"Error dropping pills: {e}")
+        if serial_status == "connected" and last_drop_date != current_date:
+            print(f"Serial port connected, attempting to drop pills...")
+            serialcontrol.dropPills(
+                dose=2,
+                time_to_drop=scheduled_hour,
+                serial_port=1101
+            )
+            print("Pills dropped successfully.")
+            pill_drop_status = "Pills dropped successfully."
+            last_drop_date == current_date
         time.sleep(30)
 
 class Label(Resource):
     def post(self):
         file = flask.request.files['file']
-        temp_path = f"/tmp/{file.filename}"  # save inside /tmp, safe on Render
+        temp_path = f"/tmp/{file.filename}"
         file.save(temp_path)
 
         output = ocr(temp_path)
@@ -96,9 +88,10 @@ def home():
     serial_status = "connected" if check_serial_connection(1101) else "thread running, not connected"
     return {
         "message": "Server is running!",
-        "serial_status": serial_status
+        "serial_status": serial_status,
+        "pill_drop_status": pill_drop_status 
     }, 200
 
 if __name__ == "__main__":
-    threading.Thread(target=runSerial, daemon=True).start()
+    threading.Thread(target=runSerial).start()
     app.run(debug=True, host="0.0.0.0", port=10000)
