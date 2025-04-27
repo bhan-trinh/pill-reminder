@@ -20,7 +20,7 @@ def ocr(filename):
     medication_name = re.search("\"medication_name\": \"(.*)\"", str(response.text)).group(1)
     dosage = re.search("\"dosage\": \"(.*)\"", str(response.text)).group(1)
     instructions = re.search("\"instructions\": \"(.*)\"", str(response.text)).group(1)
-    times = eval(re.search("\"times\": (.*)", str(response.text)).group(1))
+    times = re.search("\"times\": (.*)", str(response.text)).group(1)
 
     return {"medication_name":medication_name, "dosage":dosage, "instructions":instructions, "times":times}
 
