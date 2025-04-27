@@ -4,10 +4,12 @@ import 'package:my_app/Themes/AppColors.dart';
 class MedCard extends Container {
   final String medName;
   final String dosage;
+  final String? instructions;
 
   MedCard({
     required this.medName,
     required this.dosage,
+    this.instructions,
   });
 
 
@@ -30,7 +32,8 @@ class MedCard extends Container {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(medName, style: TextStyle(fontSize: 20)),
-                Text(dosage)
+                Text(dosage),
+                Text((instructions != null ? instructions : "")!),
                ],
              )
             ],

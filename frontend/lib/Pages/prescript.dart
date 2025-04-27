@@ -52,7 +52,7 @@ class _PrescriptPageState extends State<PrescriptPage> {
         backgroundColor: AppColors.primaryBackground,
       ),
       body: ListView.builder(
-        itemCount: jsonData.length,
+        itemCount: jsonData != null ? jsonData.length : 0,
         itemBuilder: (BuildContext context, int index) {
           final medPlanRaw = jsonData[index.toString()];
           final medPlan = jsonDecode(medPlanRaw);
@@ -61,6 +61,7 @@ class _PrescriptPageState extends State<PrescriptPage> {
           return MedCard(
             medName: medPlan["Medication"],
             dosage: medPlan["Dosage"],
+            instructions: medPlan["Instructions"],
           );
           },
       ),
