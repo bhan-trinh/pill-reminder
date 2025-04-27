@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:http_parser/http_parser.dart';
 import 'package:logger/logger.dart';
 import '../Themes/AppColors.dart';
 
@@ -30,16 +30,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<http.Response> ocr(File? image) async{
-    final bytes = await image?.readAsBytes();
-    final response = await http.post(
-      Uri.parse('https://pill-reminder-w1gv.onrender.com:10000'),
-      headers: {
-        'Content-Type': 'image/jpg'
-      },
-      body: bytes,
-    );
-    return response;
+  Future ocr(File? image) async{
+    if (image == null) {
+      throw Exception("Null Image");
+    }
+
+    try {
+      var uri = Uri.parse('https://pill-reminder-w1gv.onrender.com');
+
+      var request = http.MultipartRequest("POST", uri)
+      ..headers['Content-Type'] = 'multipart/form-data'
+      ..files.add(await http.MultipartFile.fromPath(
+        'file',
+        image.path,
+        contentType: MediaType('image', 'jpg'),
+      ));
+
+      var response = await request.send().timeout(Duration(seconds:60));
+
+      if (response.statusCode == 200) {
+        var responseString = await response.stream.bytesToString();
+        return responseString;
+      } else {
+        var responseString = await response.stream.bytesToString();
+        throw Exception("Failed to process image. Status: ${response.statusCode}, Response: $responseString");
+      }
+    } catch (e){
+      throw Exception("Error during OCR request: $e");
+    }
   }
 
   @override
@@ -78,8 +96,11 @@ class _HomePageState extends State<HomePage> {
                 ]  )
               ),
           GestureDetector(
-            onTap: () => 
-              getImage(ImageSource.gallery),
+            onTap: () async{
+                await getImage(ImageSource.gallery);
+                final response = await ocr(_image);
+                logger.d(response);
+              },
               child: Stack (
                 alignment: Alignment.center,
                 children: <Widget> [
