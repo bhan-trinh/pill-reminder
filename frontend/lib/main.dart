@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'Widgets/navigation_menu.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'Widgets/noti_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotiService().initNotification();
     // Get the app's documents directory
   final directory = await getApplicationDocumentsDirectory();
   final filePath = '${directory.path}/medLabels.json';
