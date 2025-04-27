@@ -1,45 +1,34 @@
-from transformers import DonutProcessor, VisionEncoderDecoderModel
-from PIL import ImageEnhance, Image, ImageFilter
-import torch
-import numpy as np
+import flask
+import re
+from flask_restful import Resource, Api
+from google import genai
+client = genai.Client(api_key="AIzaSyA2EKW02XxzXGUX3xCw_h2mWoES8Aq0yK0")
 
-processor = DonutProcessor.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa", use_fast=True)
-model = VisionEncoderDecoderModel.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa", torch_dtype=torch.float32, low_cpu_mem_usage=True)
-model = model.to("cpu")
+app = flask.Flask(__name__)
+api = Api(app)
 
-image = Image.open("label.png")
-image = image.convert("L")
-enhancer = ImageEnhance.Contrast(image)
-image = enhancer.enhance(2.0)
-image_array = np.array(image)
-image_array = np.where(image_array > 150, 255, 0).astype(np.uint8)
-image = Image.fromarray(image_array)
-image = image.convert("RGB")
-image = image.filter(ImageFilter.MedianFilter(size=3))
+file = client.files.upload(file="label.png")
+response = client.models.generate_content(
+    model="gemini-2.0-flash-001", 
+    contents=["Output the contents of this label into a python dictionary listing the medication name, dosage, instructions, and times. Only output the dictionary, nothing else",file])
 
-task_prompts = ["""
-<s_docvqa><s_question>
-Question: What is the dose of the medication (in milligrams)?
-Answer:
-</s_question><s_answer>
-""",
-"""
-<s_docvqa><s_question>
-Question: Question: What is the name of the medication (not the dosage)?
-Answer:
-</s_question><s_answer>
-""",
-"""
-<s_docvqa><s_question>
-Question: What are the full instructions for taking the medication (e.g., dosage frequency, timing, amount)?
-Answer:
-</s_question><s_answer>
-"""
-]
-pixel_values = processor(image, return_tensors="pt").pixel_values
-for i in range(0,3):
-    decoder_input_ids = processor.tokenizer(task_prompts[i], add_special_tokens=False, return_tensors="pt").input_ids
-    outputs = model.generate(pixel_values, decoder_input_ids=decoder_input_ids, max_length=512, pad_token_id=processor.tokenizer.pad_token_id)
-    generated_text = processor.batch_decode(outputs, skip_special_tokens=True)[0]
-    print(generated_text)
+medication_name = re.search("\"medication_name\": \"(.*)\"", str(response.text)).group(1)
+dosage = re.search("\"dosage\": \"(.*)\"", str(response.text)).group(1)
+instructions = re.search("\"instructions\": \"(.*)\"", str(response.text)).group(1)
+times = eval(re.search("\"times\": (.*)", str(response.text)).group(1))
 
+
+
+class Label(Resource):
+    def get(self):
+        return {
+            "Medication" : medication_name,
+            "Dosage" : dosage,
+            "Instructions" : instructions,
+            "Times" : times,
+        }
+
+api.add_resource(Label, "/")
+if __name__ == "__main__":
+    print(response.text)
+    app.run(debug=True, host="0.0.0.0", port=8080)
