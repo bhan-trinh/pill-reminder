@@ -15,7 +15,7 @@ def ocr(filename):
     file = client.files.upload(file=filename)
     response = client.models.generate_content(
         model="gemini-2.0-flash-001", 
-        contents=["Output the contents of this label into a python dictionary listing the medication name, dosage, instructions, and times. Only output the dictionary, nothing else",file])
+        contents=["Output the contents of this label into a python dictionary listing the medication name, dosage, instructions, and times. Only output the dictionary, nothing else. Make sure to close the square braces in the times field.",file])
 
     medication_name = re.search("\"medication_name\": \"(.*)\"", str(response.text)).group(1)
     dosage = re.search("\"dosage\": \"(.*)\"", str(response.text)).group(1)
