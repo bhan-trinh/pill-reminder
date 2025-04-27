@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      var uri = Uri.parse('https://pill-reminder-w1gv.onrender.com');
+      var uri = Uri.parse('https://pill-reminder-amj9.onrender.com');
 
       var request = http.MultipartRequest("POST", uri)
       ..headers['Content-Type'] = 'multipart/form-data'
