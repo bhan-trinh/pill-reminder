@@ -73,7 +73,7 @@ class NotiService {
       }
 
       // Pass the correct NotificationDetails to the show method.
-      await Future.delayed(Duration(seconds: 30)); // Wait for 1 minute
+      await Future.delayed(Duration(seconds:10)); // Wait for 1 minute
       await notificationsPlugin.show(
         id,
         title,
