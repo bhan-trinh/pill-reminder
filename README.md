@@ -1,3 +1,9 @@
+**Informative Presentation:** https://docs.google.com/presentation/d/1NbVcJWCDHW2RY7Z6XvJhCSgrOmFwGgGDV2OS9Qz-QFk/edit?usp=sharing
+
+**Figma UI Design:** https://www.figma.com/design/UxyCDdde34kBL1eLU9bdpx/Untitled?node-id=0-1&p=f&t=8OX6AeCDDeXYHa6d-0
+
+**Schematics:** https://www.tinkercad.com/things/9HbrOFeCOlO-pill-dispenser?sharecode=k7XHtGjkRbCvFKqc9qDhw9J9QYZOHukcPgOvPTsVOU4
+
 ### Description
 ---
 Pill Reminder is a smart medication management system that simplifies pill-taking with an intuitive, accessible interface designed for easy navigation. Users can snap a photo of their prescription label, and the app will automatically scan and extract dosing instructions. These instructions are then sent to an automatic pill dispenser, which releases the correct dose at the right time of day.
