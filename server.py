@@ -29,10 +29,9 @@ class Label(Resource):
     def post(self):
 
         file = flask.request.files['file']
-        filepath = f"/{file.filename}"
-        file.save(filepath)
+        file_bytes = file.read()
 
-        output = ocr(filepath)
+        output = ocr(file_bytes)
 
         return {
             "Medication" : output["medication_name"],
