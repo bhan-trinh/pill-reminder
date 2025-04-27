@@ -72,8 +72,10 @@ class _HomePageState extends State<HomePage> {
     final file = File(filePath);
     
     // Smh write it to be " '1': {jsonData}" please 
-    var jsonData = "\"1\":${jsonEncode(jsonResponse)}";
-    await file.writeAsString(jsonData);
+    Map<String, dynamic> jsonData = {
+    "0": jsonResponse, // Not string, just real JSON
+  };
+    await file.writeAsString(jsonEncode(jsonData));
 
     print('JSON saved locally to: $filePath');
   }
@@ -119,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                 await getImage(ImageSource.gallery);
                 final response = await ocr(_image);
                 logger.d(response);
+                saveData(response);
               },
               child: Stack (
                 alignment: Alignment.center,
