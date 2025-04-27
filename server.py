@@ -3,7 +3,6 @@ import re
 from flask_restful import Resource, Api
 from google import genai
 import os
-from io import BytesIO
 
 api_key = os.getenv('API_KEY')
 client = genai.Client(api_key=api_key)
@@ -11,11 +10,9 @@ client = genai.Client(api_key=api_key)
 app = flask.Flask(__name__)
 api = Api(app)
 
-def ocr(file_bytes):
-    file_like = BytesIO(file_bytes)  # Wrap bytes into file-like object
-    file_like.name = 'uploaded.jpg'  # Some libraries expect .name attribute
-
-    uploaded_file = client.files.upload(file=file_like)
+def ocr(filename):
+    
+    file = client.files.upload(file=filename)
     response = client.models.generate_content(
         model="gemini-2.0-flash-001", 
         contents=["Output the contents of this label into a python dictionary listing the medication name, dosage, instructions, and times. Only output the dictionary, nothing else",file])
@@ -31,11 +28,13 @@ def ocr(file_bytes):
 
 class Label(Resource):
     def post(self):
-
         file = flask.request.files['file']
-        file_bytes = file.read()
+        temp_path = f"/tmp/{file.filename}"  # save inside /tmp, safe on Render
+        file.save(temp_path)
 
-        output = ocr(file_bytes)
+        output = ocr(temp_path)
+
+        os.remove(temp_path)
 
         return {
             "Medication" : output["medication_name"],
