@@ -17,4 +17,4 @@ Werkzeug==3.1.3
 gunicorn==23.0.0
 flask_restful==0.3.10
 google
-re
+re==2024.11.6
