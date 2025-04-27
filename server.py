@@ -4,14 +4,14 @@ from flask_restful import Resource, Api
 from google import genai
 import os
 from dotenv import load_dotenv
-import threading
+# import threading
 
 # import time
 # import datetime
 # from backend.hardware.python import serialcontrol
 # import serial
 # from serial.tools import list_ports
-import checkport
+# import checkport
 
 load_dotenv()
 
@@ -62,5 +62,5 @@ def home():
 
 
 if __name__ == "__main__":
-    threading.Thread(target=checkport.runSerial).start()
+    # threading.Thread(target=checkport.runSerial).start()
     app.run(debug=True, host="0.0.0.0", port=10000)
