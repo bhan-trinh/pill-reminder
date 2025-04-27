@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:logger/logger.dart';
 import '../Themes/AppColors.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      var uri = Uri.parse('https://pill-reminder-amj9.onrender.com');
+      var uri = Uri.parse('https://pill-reminder-amj9.onrender.com/');
 
       var request = http.MultipartRequest("POST", uri)
       ..headers['Content-Type'] = 'multipart/form-data'
@@ -60,6 +62,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  
+  void saveData (jsonResponse) async {
+    // Get the app's documents directory
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/medLabels.json';
+
+    // Save data to a JSON file
+    final file = File(filePath);
+    
+    // Smh write it to be " '1': {jsonData}" please 
+    var jsonData = "\"1\":${jsonEncode(jsonResponse)}";
+    await file.writeAsString(jsonData);
+
+    print('JSON saved locally to: $filePath');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +93,7 @@ class _HomePageState extends State<HomePage> {
                 await getImage(ImageSource.camera);
                 final response = await ocr(_image);
                 logger.d(response);
+                saveData(response);
                 },
               child: Stack (
                 alignment: Alignment.center,
