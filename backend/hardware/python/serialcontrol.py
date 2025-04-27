@@ -3,6 +3,7 @@ import time
 import datetime
 
 def dropPills(dose, time_to_drop, serial_port):
+    print('Start drop pill func')
     if dose not in [1, 2, 3]:
         raise ValueError("Dose must be 1, 2, or 3.")
     if not (0 <= time_to_drop <= 23):

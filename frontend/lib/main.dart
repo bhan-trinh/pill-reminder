@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'Widgets/navigation_menu.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    // Get the app's documents directory
+  final directory = await getApplicationDocumentsDirectory();
+  final filePath = '${directory.path}/medLabels.json';
+
+  // Save data to a JSON file
+  final file = File(filePath);
+
   runApp(const MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
