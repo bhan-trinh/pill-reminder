@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:logger/logger.dart';
 import '../Themes/AppColors.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var logger = Logger();
   File? _image;
   final _picker = ImagePicker();
 
@@ -26,6 +30,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<http.Response> ocr(File? image) async{
+    final bytes = await image?.readAsBytes();
+    final response = await http.post(
+      Uri.parse('localhost:8080'),
+      headers: {
+        'Content-Type': 'image/jpg'
+      },
+      body: bytes,
+    );
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +53,10 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           GestureDetector(
-              onTap: () => getImage(ImageSource.camera),
+              onTap: () {
+                getImage(ImageSource.camera);
+                logger.d(ocr(_image));
+                },
               child: Stack (
                 alignment: Alignment.center,
                 children: <Widget> [
