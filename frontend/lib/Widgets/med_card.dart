@@ -26,13 +26,6 @@ class MedCard extends Container {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-            Container(
-              height: 80,
-              width: 100,
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(0),
-              color: Colors.white,
-            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
