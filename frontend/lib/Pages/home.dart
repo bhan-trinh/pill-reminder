@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
-import 'package:my_app/Widgets/noti_service.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -49,13 +48,15 @@ class _HomePageState extends State<HomePage> {
   // Receive ImageSource parameter and pick from source
   getImage(ImageSource imageSource) async {
     final pickedFile = await _picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
+    if (pickedFile != null){
       _image = File(pickedFile.path);
-      setState(() {});
+      setState(() {
+        
+      });
     }
   }
 
-  Future ocr(File? image) async {
+  Future ocr(File? image) async{
     if (image == null) {
       throw Exception("Null Image");
     }
@@ -63,44 +64,41 @@ class _HomePageState extends State<HomePage> {
     try {
       var uri = Uri.parse('https://pill-reminder-amj9.onrender.com/');
 
-      var request =
-          http.MultipartRequest("POST", uri)
-            ..headers['Content-Type'] = 'multipart/form-data'
-            ..files.add(
-              await http.MultipartFile.fromPath(
-                'file',
-                image.path,
-                contentType: MediaType('image', 'jpg'),
-              ),
-            );
+      var request = http.MultipartRequest("POST", uri)
+      ..headers['Content-Type'] = 'multipart/form-data'
+      ..files.add(await http.MultipartFile.fromPath(
+        'file',
+        image.path,
+        contentType: MediaType('image', 'jpg'),
+      ));
 
-      var response = await request.send().timeout(Duration(seconds: 60));
+      var response = await request.send().timeout(Duration(seconds:60));
 
       if (response.statusCode == 200) {
         var responseString = await response.stream.bytesToString();
         return responseString;
       } else {
         var responseString = await response.stream.bytesToString();
-        throw Exception(
-          "Failed to process image. Status: ${response.statusCode}, Response: $responseString",
-        );
+        throw Exception("Failed to process image. Status: ${response.statusCode}, Response: $responseString");
       }
-    } catch (e) {
+    } catch (e){
       throw Exception("Error during OCR request: $e");
     }
   }
 
   
   void saveData (jsonResponse) async {
-    // Get the app's documents directory
     final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/medLabels.json';
 
     final file = File(filePath);
     
-    // Smh write it to be " '1': {jsonData}" please 
+    final jsonString = await file.readAsString();
+    final data = jsonDecode(jsonString) as Map<String, dynamic>;
+    print(data.length);
+
     Map<String, dynamic> jsonData = {
-    "0": jsonResponse, // Not string, just real JSON
+    "0": jsonResponse,
   };
     await file.writeAsString(jsonEncode(jsonData));
 
@@ -118,85 +116,76 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           GestureDetector(
-            onTap: () async {
-              await getImage(ImageSource.camera);
-              final response = await ocr(_image);
-              final notificationService = NotiService();
-              await notificationService.showNotificationWithDelay(
-                title: "Time to take your medicaton.",
-                body: "",
-              );
-              logger.d(response);
-              saveData(response);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
+              onTap: () async {
+                await getImage(ImageSource.camera);
+                final response = await ocr(_image);
+                logger.d(response);
+                saveData(response);
+                },
+              child: Stack (
+                alignment: Alignment.center,
+                children: <Widget> [
                 Container(
-                  height: 200,
+                  height: 300,
                   alignment: Alignment.topCenter,
                   decoration: BoxDecoration(color: AppColors.accent2),
                 ),
                 Positioned.fill(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.camera_alt_outlined, size: 75),
-                      Text(
-                        "Take Photo",
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt_outlined, size: 100),
+                          Text("Take Photo"),
+                        ],
+                      )
+                )
+                ]  )
+              ),
           GestureDetector(
-            onTap: () async {
-              await getImage(ImageSource.gallery);
-              final response = await ocr(_image);
-              logger.d(response);
-              saveData(response);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
+            onTap: () async{
+                await getImage(ImageSource.gallery);
+                final response = await ocr(_image);
+                logger.d(response);
+                saveData(response);
+              },
+              child: Stack (
+                alignment: Alignment.center,
+                children: <Widget> [
                 Container(
                   height: 100,
                   alignment: Alignment.topCenter,
                   decoration: BoxDecoration(color: AppColors.accent1),
                 ),
                 Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Choose from Gallery",
-                      style: TextStyle(color: AppColors.primaryBackground, fontSize: 20),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Choose from Gallery",
+                        style: TextStyle(color: AppColors.primaryBackground),)
+                )
+                )
+                ]  )
+              ),
+          SizedBox(
+            height: 20
           ),
-          SizedBox(height: 20),
-          Text("Today's Plans",style: TextStyle(
-                          fontSize: 20,
-                        ),),
+          Text("Today's Plans"),
           SizedBox(
             height: 200,
             child:
           ListView.builder(
-            
-            scrollDirection: Axis.horizontal,
-            itemCount: 2,
-            itemBuilder: (BuildContext context, int index) {
+        itemCount: jsonData != null ? jsonData.length : 0,
+        itemBuilder: (BuildContext context, int index) {
+          final medPlanRaw = jsonData[index.toString()];
+          final medPlan = jsonDecode(medPlanRaw);
+          print("HEY THIS IS $medPlan");
+          print(medPlan.runtimeType);
           return MedCard(
-            medName: "Ibuprofen",
-            dosage: "2 pills",
-          );})
+            medName: medPlan["Medication"],
+            dosage: medPlan["Dosage"],
+          );
+          },
+      ),
           )
           
 
