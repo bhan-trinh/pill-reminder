@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
+import 'package:my_app/Widgets/noti_service.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -74,6 +75,8 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 await getImage(ImageSource.camera);
                 final response = await ocr(_image);
+                final notificationService = NotiService();
+                await notificationService.showNotificationWithDelay(title:"Time to take your medicaton.", body:"");
                 logger.d(response);
                 },
               child: Stack (
