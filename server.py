@@ -11,6 +11,7 @@ app = flask.Flask(__name__)
 api = Api(app)
 
 def ocr(filename):
+    
     file = client.files.upload(file=filename)
     response = client.models.generate_content(
         model="gemini-2.0-flash-001", 
@@ -27,12 +28,13 @@ def ocr(filename):
 
 class Label(Resource):
     def post(self):
-
         file = flask.request.files['file']
-        filepath = f"./uploads/{file.filename}"
-        file.save(filepath)
+        temp_path = f"/tmp/{file.filename}"  # save inside /tmp, safe on Render
+        file.save(temp_path)
 
-        output = ocr(filepath)
+        output = ocr(temp_path)
+
+        os.remove(temp_path)
 
         return {
             "Medication" : output["medication_name"],
@@ -41,7 +43,11 @@ class Label(Resource):
             "Times" : output["times"],
         }
 
-api.add_resource(Label, "/upload")
+api.add_resource(Label, "/")
+
+@app.route("/", methods=["GET"])
+def home():
+    return {"message": "Server is running!"}, 200
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8080)
+    app.run(debug=True, host="0.0.0.0", port=10000)

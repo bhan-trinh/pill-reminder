@@ -28,13 +28,12 @@ class _HomePageState extends State<HomePage> {
         
       });
     }
-    logger.d(ocr(_image));
   }
 
   Future<http.Response> ocr(File? image) async{
     final bytes = await image?.readAsBytes();
     final response = await http.post(
-      Uri.parse('localhost:8080'),
+      Uri.parse('https://pill-reminder-w1gv.onrender.com:10000'),
       headers: {
         'Content-Type': 'image/jpg'
       },
@@ -54,8 +53,10 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           GestureDetector(
-              onTap: () {
-                getImage(ImageSource.camera);
+              onTap: () async {
+                await getImage(ImageSource.camera);
+                final response = await ocr(_image);
+                logger.d(response);
                 },
               child: Stack (
                 alignment: Alignment.center,
