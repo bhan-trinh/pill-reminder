@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
         
       });
     }
+    logger.d(ocr(_image));
   }
 
   Future<http.Response> ocr(File? image) async{
@@ -55,7 +56,6 @@ class _HomePageState extends State<HomePage> {
           GestureDetector(
               onTap: () {
                 getImage(ImageSource.camera);
-                logger.d(ocr(_image));
                 },
               child: Stack (
                 alignment: Alignment.center,
@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
                 ]  )
               ),
           GestureDetector(
-            onTap: () => getImage(ImageSource.gallery),
+            onTap: () => 
+              getImage(ImageSource.gallery),
               child: Stack (
                 alignment: Alignment.center,
                 children: <Widget> [
