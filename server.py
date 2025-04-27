@@ -47,12 +47,12 @@ class Label(Resource):
 
         os.remove(temp_path)
 
-        return {
+        return flask.jsonify({
             "Medication" : output["medication_name"],
             "Dosage" : output["dosage"],
             "Instructions" : output["instructions"],
             "Times" : output["times"],
-        }
+        })
 
 api.add_resource(Label, "/")
 
