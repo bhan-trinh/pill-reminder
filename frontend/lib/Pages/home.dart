@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
-import 'package:my_app/Widgets/noti_service.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -18,9 +17,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var jsonData;
   var logger = Logger();
   File? _image;
   final _picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    loadLocalJsonData();
+  }
+
+  Future<void> loadLocalJsonData() async {
+  // Get the app's documents directory
+  final directory = await getApplicationDocumentsDirectory();
+  final filePath = '${directory.path}/medLabels.json';
+
+  final file = File(filePath);
+  if (await file.exists()) {
+    final jsonString = await file.readAsString();
+    final data = jsonDecode(jsonString);
+    print(data);
+    setState(() {
+      jsonData = data;
+    });
+  } else {
+    print("No local file found.");
+  }
+}
 
   // Receive ImageSource parameter and pick from source
   getImage(ImageSource imageSource) async {
@@ -65,16 +88,13 @@ class _HomePageState extends State<HomePage> {
 
   
   void saveData (jsonResponse) async {
-    // Get the app's documents directory
     final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/medLabels.json';
 
-    // Save data to a JSON file
     final file = File(filePath);
-    
-    // Smh write it to be " '1': {jsonData}" please 
+
     Map<String, dynamic> jsonData = {
-    "0": jsonResponse, // Not string, just real JSON
+    "0": jsonResponse,
   };
     await file.writeAsString(jsonEncode(jsonData));
 
@@ -95,8 +115,6 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 await getImage(ImageSource.camera);
                 final response = await ocr(_image);
-                final notificationService = NotiService();
-                await notificationService.showNotificationWithDelay(title:"Time to take your medicaton.", body:"");
                 logger.d(response);
                 saveData(response);
                 },
@@ -152,14 +170,18 @@ class _HomePageState extends State<HomePage> {
             height: 200,
             child:
           ListView.builder(
-            
-            scrollDirection: Axis.horizontal,
-            itemCount: 2,
-            itemBuilder: (BuildContext context, int index) {
+        itemCount: jsonData != null ? jsonData.length : 0,
+        itemBuilder: (BuildContext context, int index) {
+          final medPlanRaw = jsonData[index.toString()];
+          final medPlan = jsonDecode(medPlanRaw);
+          print("HEY THIS IS $medPlan");
+          print(medPlan.runtimeType);
           return MedCard(
-            medName: "Ibuprofen",
-            dosage: "2 pills",
-          );})
+            medName: medPlan["Medication"],
+            dosage: medPlan["Dosage"],
+          );
+          },
+      ),
           )
           
 

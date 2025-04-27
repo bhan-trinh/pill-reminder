@@ -12,31 +12,38 @@ class NavigationMenu extends StatelessWidget {
     final controller = Get.put(NavigationController());
 
     return Scaffold(
-      bottomNavigationBar: Obx (
+      bottomNavigationBar: Obx(
         () => NavigationBar(
-        backgroundColor: AppColors.secondaryBackground,
-        indicatorColor: AppColors.accent1,
-        selectedIndex: controller.selectedIndex.value,
-        onDestinationSelected: (index) {
-          controller.selectedIndex.value = index;
+          backgroundColor: AppColors.secondaryBackground,
+          indicatorColor: AppColors.accent1,
+          selectedIndex: controller.selectedIndex.value,
+          onDestinationSelected: (index) {
+            controller.selectedIndex.value = index;
           },
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.home, color: Colors.black), label: "Home"),
-          NavigationDestination(icon: const Icon(Icons.book, color: Colors.black), label: "Prescriptions"),
-          NavigationDestination(icon: const Icon(Icons.settings, color: Colors.black), label: "Settings"),
-        ],
-        )
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home, color: Colors.black),
+              label: "Home",
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.book, color: Colors.black),
+              label: "Prescriptions",
+            ),
+            // NavigationDestination(icon: const Icon(Icons.settings, color: Colors.black), label: "Settings"),
+          ],
         ),
-        body: Obx(() => controller.screens[controller.selectedIndex.value]),
+      ),
+      body: Obx(() => controller.screens[controller.selectedIndex.value]),
     );
   }
 }
 
-class NavigationController extends GetxController{
+class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
-  final screens = [
+  final List<Widget> screens = [
+    // Changed to List<Widget>
     const HomePage(),
     const PrescriptPage(),
-    Container(),
-    ];
+    // Container(),
+  ];
 }

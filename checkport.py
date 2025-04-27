@@ -37,6 +37,8 @@ def check_serial_connection():
 
 
 def runSerial():
+    dose = int(input('Enter number of pills per dose: '))
+    time_to_drop = int(input('Enter time for dose: '))
     global pill_drop_status
     scheduled_hour = datetime.datetime.now().hour
     last_drop_date = None
@@ -45,7 +47,7 @@ def runSerial():
         print("Waiting for serial port to connect...")
         find_connected_port()
         time.sleep(5)
-
+    # while True:
     while last_drop_date != current_date:
         current_date = datetime.datetime.now().date
         serial_status = "connected" if check_serial_connection() else "thread running, not connected"
@@ -54,7 +56,7 @@ def runSerial():
         if serial_status == "connected":
             print(f"Serial port connected ({connected_port}), attempting to drop pills...")
             serialcontrol.dropPills(
-                dose=2,
+                dose=3,
                 time_to_drop=scheduled_hour,
                 serial_port=connected_port
             )
@@ -65,4 +67,4 @@ def runSerial():
     print("Done dropping")
 
 
-# runSerial()
+runSerial()
