@@ -144,6 +144,8 @@ class _HomePageState extends State<HomePage> {
             onTap: () async{
                 await getImage(ImageSource.gallery);
                 final response = await ocr(_image);
+                final notificationService = NotiService();
+                await notificationService.showNotificationWithDelay(title:"Time to take your medicaton.", body:"");
                 logger.d(response);
                 saveData(response);
               },
