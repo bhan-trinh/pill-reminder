@@ -3,6 +3,7 @@ import 'Widgets/navigation_menu.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'Widgets/noti_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.righteousTextTheme(),
       ),
       home: const NavigationMenu(),
     );
