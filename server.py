@@ -7,6 +7,9 @@ import time
 import datetime
 import threading
 from backend.hardware.python import serialcontrol
+from dotenv import load_dotenv
+
+load_dotenv()
 
 api_key = os.getenv('API_KEY')
 client = genai.Client(api_key=api_key)
