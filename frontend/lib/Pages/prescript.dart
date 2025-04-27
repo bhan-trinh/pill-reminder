@@ -13,12 +13,28 @@ class PrescriptPage extends StatefulWidget {
 }
 
 class _PrescriptPageState extends State<PrescriptPage> {
-    @override
+  var jsonData;
+
+  @override
   void initState() {
     super.initState();
-    DatabaseHelper dbHelper = DatabaseHelper();
-    dbHelper.loadJsonAsset('menu');
+    var data = loadJsonAsset('medLabels');
+    setState(() {
+      jsonData = data;
+    });
+
+    // loadJsonAsset('history');
   }
+
+    Future<void> loadJsonAsset(filename) async {
+    final String jsonString =
+        await rootBundle.loadString('../../../backend/database/$filename.json');
+    var data = jsonDecode(jsonString);
+    setState(() {
+      jsonData = data;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +55,3 @@ class _PrescriptPageState extends State<PrescriptPage> {
   }
 }
 
-class DatabaseHelper{
-  Future<void> loadJsonAsset(filename) async {
-    final String jsonString =
-        await rootBundle.loadString('../../../backend/database/$filename.json');
-    var data = jsonDecode(jsonString);
-    print(data);
-  }
-
-}

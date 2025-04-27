@@ -1,1 +1,1 @@
-web: python backend/test-main.py
+web: python backend/main.py

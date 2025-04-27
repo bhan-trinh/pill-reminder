@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'Widgets/navigation_menu.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -20,3 +21,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
