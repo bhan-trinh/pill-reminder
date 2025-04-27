@@ -89,7 +89,10 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.horizontal,
             itemCount: 2,
             itemBuilder: (BuildContext context, int index) {
-          return MedCard();})
+          return MedCard(
+            medName: "Ibuprofen",
+            dosage: "2 pills",
+          );})
           )
           
 

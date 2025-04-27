@@ -18,18 +18,15 @@ class _PrescriptPageState extends State<PrescriptPage> {
   @override
   void initState() {
     super.initState();
-    var data = loadJsonAsset('medLabels');
-    setState(() {
-      jsonData = data;
-    });
-
-    // loadJsonAsset('history');
+    loadJsonAsset();
   }
 
-    Future<void> loadJsonAsset(filename) async {
+  Future<void> loadJsonAsset() async {
     final String jsonString =
-        await rootBundle.loadString('../../../backend/database/$filename.json');
+        await rootBundle.loadString('lib/database/medLabels.json');
+        
     var data = jsonDecode(jsonString);
+    print(data);
     setState(() {
       jsonData = data;
     });
@@ -41,13 +38,17 @@ class _PrescriptPageState extends State<PrescriptPage> {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Medicine Plans"),
         backgroundColor: AppColors.primaryBackground,
       ),
       body: ListView.builder(
         itemCount: 2,
         itemBuilder: (BuildContext context, int index) {
-          return MedCard();
+          return MedCard(
+            medName: jsonData[index.toString()]["name"],
+            dosage: jsonData[index.toString()]["dosage"],
+
+          );
           },
       ),
       
