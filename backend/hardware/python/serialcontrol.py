@@ -2,8 +2,7 @@ import serial
 import time
 import datetime
 
-def dropPills(dose, time_to_drop, serial_port=1201):
-    serial_port=f'/dev/tty.usbmodem{serial_port}'
+def dropPills(dose, time_to_drop, serial_port):
     if dose not in [1, 2, 3]:
         raise ValueError("Dose must be 1, 2, or 3.")
     if not (0 <= time_to_drop <= 23):

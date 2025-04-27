@@ -9,6 +9,7 @@ import threading
 from backend.hardware.python import serialcontrol
 from dotenv import load_dotenv
 import serial
+from serial.tools import list_ports
 
 load_dotenv()
 
@@ -19,17 +20,27 @@ app = flask.Flask(__name__)
 api = Api(app)
 
 pill_drop_status = None
+connected_port = None
 
-def check_serial_connection(port):
-    port = f'/dev/tty.usbmodem{port}'
-    try:
-        ser = serial.Serial(port)
-        if ser.is_open:
-            return True
-        else:
+def find_connected_port():
+    global connected_port
+    ports = list_ports.comports()
+    for port in ports:
+        if 'usbmodem' in port.device:
+            connected_port = port.device
+            print(f"Found connected port: {connected_port}")
+            return connected_port
+    return None
+
+def check_serial_connection():
+    if connected_port:
+        try:
+            ser = serial.Serial(connected_port)
+            if ser.is_open:
+                return True
+        except serial.SerialException:
             return False
-    except serial.SerialException:
-        return False
+    return False
 
 def ocr(filename):
     file = client.files.upload(file=filename)
@@ -49,15 +60,19 @@ def runSerial():
     scheduled_hour = 7 
     last_drop_date = None
     while True:
+        if not connected_port:
+            find_connected_port()
+
         current_date = datetime.datetime.now().date
-        serial_status = "connected" if check_serial_connection(1101) else "thread running, not connected"
+        serial_status = "connected" if check_serial_connection() else "thread running, not connected"
         print(f"Serial Status: {serial_status}")
+        
         if serial_status == "connected" and last_drop_date != current_date:
-            print(f"Serial port connected, attempting to drop pills...")
+            print(f"Serial port connected ({connected_port}), attempting to drop pills...")
             serialcontrol.dropPills(
                 dose=2,
                 time_to_drop=scheduled_hour,
-                serial_port=1101
+                serial_port=connected_port
             )
             print("Pills dropped successfully.")
             pill_drop_status = "Pills dropped successfully."
@@ -85,7 +100,7 @@ api.add_resource(Label, "/")
 
 @app.route("/", methods=["GET"])
 def home():
-    serial_status = "connected" if check_serial_connection(1101) else "thread running, not connected"
+    serial_status = "connected" if check_serial_connection() else "thread running, not connected"
     return {
         "message": "Server is running!",
         "serial_status": serial_status,
