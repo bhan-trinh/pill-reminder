@@ -92,10 +92,6 @@ class _HomePageState extends State<HomePage> {
     final filePath = '${directory.path}/medLabels.json';
 
     final file = File(filePath);
-    
-    final jsonString = await file.readAsString();
-    final data = jsonDecode(jsonString) as Map<String, dynamic>;
-    print(data.length);
 
     Map<String, dynamic> jsonData = {
     "0": jsonResponse,
