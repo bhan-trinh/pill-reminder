@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/Widgets/med_card.dart';
+import 'package:my_app/Widgets/noti_service.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -72,8 +73,10 @@ class _HomePageState extends State<HomePage> {
     final file = File(filePath);
     
     // Smh write it to be " '1': {jsonData}" please 
-    var jsonData = "\"1\":${jsonEncode(jsonResponse)}";
-    await file.writeAsString(jsonData);
+    Map<String, dynamic> jsonData = {
+    "0": jsonResponse, // Not string, just real JSON
+  };
+    await file.writeAsString(jsonEncode(jsonData));
 
     print('JSON saved locally to: $filePath');
   }
@@ -92,6 +95,8 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 await getImage(ImageSource.camera);
                 final response = await ocr(_image);
+                final notificationService = NotiService();
+                await notificationService.showNotificationWithDelay(title:"Time to take your medicaton.", body:"");
                 logger.d(response);
                 saveData(response);
                 },
@@ -119,6 +124,7 @@ class _HomePageState extends State<HomePage> {
                 await getImage(ImageSource.gallery);
                 final response = await ocr(_image);
                 logger.d(response);
+                saveData(response);
               },
               child: Stack (
                 alignment: Alignment.center,

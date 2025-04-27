@@ -32,6 +32,7 @@ class _PrescriptPageState extends State<PrescriptPage> {
   if (await file.exists()) {
     final jsonString = await file.readAsString();
     final data = jsonDecode(jsonString);
+    print(data);
     setState(() {
       jsonData = data;
     });
@@ -51,12 +52,15 @@ class _PrescriptPageState extends State<PrescriptPage> {
         backgroundColor: AppColors.primaryBackground,
       ),
       body: ListView.builder(
-        itemCount: 2,
+        itemCount: jsonData.length,
         itemBuilder: (BuildContext context, int index) {
+          final medPlanRaw = jsonData[index.toString()];
+          final medPlan = jsonDecode(medPlanRaw);
+          print("HEY THIS IS $medPlan");
+          print(medPlan.runtimeType);
           return MedCard(
-            medName: jsonData[index.toString()]["Medication"],
-            dosage: jsonData[index.toString()]["Dosage"],
-
+            medName: medPlan["Medication"],
+            dosage: medPlan["Dosage"],
           );
           },
       ),
