@@ -17,7 +17,7 @@ def dropPills(dose, time_to_drop, serial_port=1201):
             time.sleep(1)
         except serial.SerialException as e:
             print(f"Error with the serial connection: {e}")
-        finally:
-            if 'ser' in locals() and ser.is_open:
-                ser.close()
+        # finally:
+        #     if 'ser' in locals() and ser.is_open:
+        #         ser.close()
 
