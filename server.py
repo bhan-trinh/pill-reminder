@@ -2,9 +2,10 @@ import flask
 import re
 from flask_restful import Resource, Api
 from google import genai
+import os
 
-
-client = genai.Client(api_key=key)
+api_key = os.getenv('API_KEY')
+client = genai.Client(api_key=api_key)
 
 app = flask.Flask(__name__)
 api = Api(app)
