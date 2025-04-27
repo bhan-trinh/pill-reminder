@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   Future<http.Response> ocr(File? image) async{
     final bytes = await image?.readAsBytes();
     final response = await http.post(
-      Uri.parse('https://pill-reminder-w1gv.onrender.com:10000'),
+      Uri.parse('https://pill-reminder-amj9.onrender.com/10000'),
       headers: {
         'Content-Type': 'image/jpg'
       },
