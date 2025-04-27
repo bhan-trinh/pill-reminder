@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:my_app/Themes/AppColors.dart';
 
 class MedCard extends Container {
-  MedCard({super.key});
+  final String medName;
+  final String dosage;
+
+  MedCard({
+    required this.medName,
+    required this.dosage,
+  });
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +36,8 @@ class MedCard extends Container {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Ibuprofen", style: TextStyle(fontSize: 20)),
-                Text("2 Pills")
+                Text(medName, style: TextStyle(fontSize: 20)),
+                Text(dosage)
                ],
              )
             ],
