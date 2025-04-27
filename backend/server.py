@@ -2,7 +2,11 @@ import flask
 import re
 from flask_restful import Resource, Api
 from google import genai
-client = genai.Client(api_key="AIzaSyA2EKW02XxzXGUX3xCw_h2mWoES8Aq0yK0")
+
+with open("key.txt", "r") as file:
+    key = file.read()
+
+client = genai.Client(api_key=key)
 
 app = flask.Flask(__name__)
 api = Api(app)
@@ -40,5 +44,5 @@ class Label(Resource):
 
 api.add_resource(Label, "/upload")
 
-if __name__ == "__main__":
+def startServer():
     app.run(debug=True, host="0.0.0.0", port=8080)
