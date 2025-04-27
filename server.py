@@ -29,7 +29,7 @@ class Label(Resource):
     def post(self):
 
         file = flask.request.files['file']
-        filepath = f"./uploads/{file.filename}"
+        filepath = f"/{file.filename}"
         file.save(filepath)
 
         output = ocr(filepath)
@@ -41,7 +41,7 @@ class Label(Resource):
             "Times" : output["times"],
         }
 
-api.add_resource(Label, "/upload")
+api.add_resource(Label, "/")
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=10000)
