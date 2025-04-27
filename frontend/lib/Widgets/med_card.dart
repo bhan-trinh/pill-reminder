@@ -38,8 +38,8 @@ class MedCard extends Container {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(onPressed: () {}, child: Icon(Icons.check)),
-              ElevatedButton(onPressed: () {}, child: Icon(Icons.close))
+              ElevatedButton(onPressed: () {}, child: Icon(Icons.close)),
+              ElevatedButton(onPressed: () {}, child: Icon(Icons.check))
             ]
           ),
         

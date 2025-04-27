@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_app/Widgets/med_card.dart';
 import 'dart:io';
 import '../Themes/AppColors.dart';
 
@@ -76,6 +77,21 @@ class _HomePageState extends State<HomePage> {
                 )
                 ]  )
               ),
+          SizedBox(
+            height: 20
+          ),
+          Text("Today's Plans"),
+          SizedBox(
+            height: 200,
+            child:
+          ListView.builder(
+            
+            scrollDirection: Axis.horizontal,
+            itemCount: 2,
+            itemBuilder: (BuildContext context, int index) {
+          return MedCard();})
+          )
+          
 
           
       ]
